@@ -1,0 +1,216 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f6f8;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 35px; /* Adicionado um pouco de margem para afastar dos controles */
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 10px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.tab-button {
+  padding: 8px 12px;
+  background-color: #e5e7eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tab-button:hover {
+    background-color: #d1d5db;
+}
+
+.tab-button.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+.month-view {
+  display: none;
+}
+
+.month-view.active {
+  display: block;
+}
+
+.week {
+  margin-bottom: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  padding: 10px;
+  overflow-x: auto; /* Permite rolagem horizontal se a tabela for muito larga */
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 900px; /* Garante que a tabela não fique muito pequena */
+}
+
+th, td {
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  text-align: center;
+  white-space: nowrap; /* Impede que o conteúdo das células quebre a linha */
+}
+
+th {
+  background-color: #1e293b;
+  color: white;
+}
+
+td:first-child {
+  font-weight: 600;
+  text-align: left;
+  background-color: #f1f5f9;
+}
+
+select {
+  width: 100%;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  appearance: none; /* Remove o estilo padrão do navegador para selects */
+  background-color: white;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+/* Cores para as opções de turno */
+select option[value="06:00 - 12:00"] { background-color: #bfdbfe; } /* blue-200 */
+select option[value="12:00 - 18:00"] { background-color: #bbf7d0; } /* green-200 */
+select option[value="18:00 - 00:00"] { background-color: #fed7aa; } /* orange-200 */
+select option[value="00:00 - 06:00"] { background-color: #ddd6fe; } /* purple-200 */
+select option[value*="Folga"] { background-color: #fef9c3; } /* yellow-200 */
+select option[value*="Atestado"] { background-color: #fca5a5; } /* red-200 */
+select option[value*="Férias"] { background-color: #fde68a; } /* amber-200 */
+select option[value*="Licença"] { background-color: #fcd34d; } /* amber-300 */
+select option[value="Ausente"] { background-color: #e5e7eb; } /* gray-200 - Mudei de "Falta não justificada" para "Ausente" */
+
+
+/* --- SININHO DE ALERTA E LISTA DE ALERTAS (CORRIGIDO) --- */
+#alarmeWrapper {
+  position: fixed; /* Fixa na tela */
+  top: 20px;
+  right: 20px;
+  z-index: 9999; /* Garante que fique por cima de tudo */
+  /* display: flex; /* Opcional: Se quiser que o sino e a lista fiquem no mesmo fluxo */
+  /* flex-direction: column; */
+  /* align-items: flex-end; */
+}
+
+#alarmeSino {
+  background-color: #f97316; /* Laranja */
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  width: 40px; /* Tamanho fixo */
+  height: 40px; /* Tamanho fixo */
+  display: flex; /* Para centralizar o emoji */
+  justify-content: center;
+  align-items: center;
+  font-size: 20px; /* Tamanho do emoji */
+  position: relative; /* Para o badge se posicionar sobre ele */
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background-color 0.2s ease;
+}
+
+#alarmeSino:hover {
+    background-color: #ea580c; /* Laranja mais escuro no hover */
+}
+
+#contadorAlertaBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ef4444; /* Vermelho */
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 9999px; /* Um valor alto para fazer um círculo/oval */
+  min-width: 18px; /* Garante que o círculo seja visível */
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  /* O display é controlado pelo JS, mas a inicialização no HTML é `display: none;` */
+}
+
+#listaAlertas {
+  display: none; /* O JS controla a visibilidade (block/none) */
+  position: absolute; /* Posiciona a lista em relação ao #alarmeWrapper */
+  top: calc(100% + 10px); /* Abaixo do sino + 10px de espaçamento */
+  right: 0; /* Alinha à direita */
+  width: 300px; /* Largura da caixa */
+  max-height: 250px; /* Altura máxima com scroll */
+  overflow-y: auto; /* Rolagem se o conteúdo exceder a altura */
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 15px;
+  list-style: none; /* Remove marcadores de lista */
+  margin: 0; /* Remove margem padrão da ul */
+  color: #333;
+  font-size: 0.9em;
+  z-index: 9998; /* Abaixo do sino, mas acima do conteúdo principal */
+}
+
+#listaAlertas li {
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+#listaAlertas li:last-child {
+  border-bottom: none;
+}
+
+/* Estilo para dias de outro mês */
+.other-month-day {
+    color: #aaa;
+    background-color: #fafafa;
+}
+
+/* Classes para o input de mês e botões */
+.controls input[type="month"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.controls button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+    background-color: #2980b9;
+}
